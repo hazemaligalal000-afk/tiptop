@@ -1,36 +1,71 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# TipTop - Vendor Intelligence Platform 🚀
 
-## Getting Started
+TipTop is an enterprise-grade B2B SaaS platform designed to modernize the vendor prequalification process. It replaces traditional excel sheets and emails with a centralized, digital, API-first ecosystem.
 
-First, run the development server:
+## 🌟 Key Features
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Vendor Prequalification Wizard (PQQ):** A comprehensive 6-step multi-form with fluid animations handling company info, organization, technical capabilities, project experience, quality compliance, and capacity constraints.
+2. **Vendor Quality Index (VQI) Engine:** An automated algorithmic scoring system that evaluates vendors based on their inputs and assigns them a quality badge (Excellent, High, Medium, Low).
+3. **Smart Vendor Search:** A dynamic dashboard for clients to explore vendors, filter by technical discipline, GMP experience, and VQI scores.
+4. **Side-by-Side Comparisons:** Dynamic tool to evaluate top vendors directly against each other.
+5. **Secure Authentication:** Integrated with Supabase Auth with fully protected routes (Middleware).
+6. **Robust Database Integration:** Connected to a PostgreSQL database via Prisma ORM for relational data storage.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🛠️ Tech Stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+* **Framework:** Next.js 16.2.10 (App Router, Server Components)
+* **Styling:** Tailwind CSS v4, Lucide React Icons
+* **State Management:** Zustand (Multi-step form persistence)
+* **Animations:** Framer Motion
+* **Database & ORM:** PostgreSQL (Supabase Pooler), Prisma v7
+* **Authentication:** Supabase SSR (@supabase/ssr)
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📦 Getting Started
 
-## Learn More
+### Prerequisites
 
-To learn more about Next.js, take a look at the following resources:
+* Node.js (v18 or higher recommended)
+* A Supabase Project with connection pooler enabled
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Setup Instructions
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. **Clone the repository and install dependencies:**
+   ```bash
+   npm install
+   ```
 
-## Deploy on Vercel
+2. **Environment Variables:**
+   Ensure your `.env` file is configured with your Supabase credentials:
+   ```env
+   DATABASE_URL="postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres?pgbouncer=true"
+   DIRECT_URL="postgresql://postgres.[ref]:[password]@aws-0-[region].pooler.supabase.com:5432/postgres"
+   NEXT_PUBLIC_SUPABASE_URL="https://[ref].supabase.co"
+   NEXT_PUBLIC_SUPABASE_ANON_KEY="your-anon-key"
+   ```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+3. **Database Migration:**
+   Sync the Prisma schema to your database:
+   ```bash
+   npx prisma generate
+   npx prisma db push
+   ```
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+4. **Run the Development Server:**
+   ```bash
+   npm run dev
+   ```
+   
+5. **Access the Platform:**
+   Open `http://localhost:1829` (Custom port configured in package.json)
+
+## 📁 Project Structure
+
+* `/src/app`: Next.js App Router (Dashboard, Search, Auth, API Routes).
+* `/src/features/pqq`: The core domain logic for the Vendor PQQ Wizard (Zustand store, step components).
+* `/src/components`: Shared layout elements (Sidebar, TopNav).
+* `/src/lib`: Singletons and client configurations (Prisma, Supabase).
+* `/prisma/schema.prisma`: The PostgreSQL database schema definition.
+
+## 🔐 Architecture Notes
+* **Route Protection:** Handled at the edge via `src/middleware.ts` using Supabase SSR cookies.
+* **Prisma Singleton:** Prisma Client v7 is instantiated via `src/lib/prisma.ts` to prevent connection leaks during development and support Next.js server actions.

@@ -1,0 +1,174 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+}
+
+enum Role {
+  VENDOR
+  CLIENT
+  ADMIN
+}
+
+model User {
+  id            String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  email         String    @unique
+  passwordHash  String?   // nullable if using Supabase Auth
+  role          Role      @default(VENDOR)
+  isVerified    Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  company       Company?
+  favorites     Favorite[]
+  searchHistory SearchHistory[]
+  activityLogs  ActivityLog[]
+  comparisonLists ComparisonList[]
+}
+
+model Company {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String    @unique @db.Uuid
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  companyName     String
+  website         String?
+  country         String?
+  regions         String[]
+  yearsOperating  Int?
+  employeeCount   Int?
+  description     String?   @db.Text
+
+  // Relations
+  capabilities    TechnicalCapability?
+  projects        ProjectExperience[]
+  compliance      QualityCompliance?
+  capacity        Capacity?
+  score           VendorScore?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model TechnicalCapability {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId       String    @unique @db.Uuid
+  company         Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  // JSON or arrays for detailed tags within disciplines
+  csa             String[]  // Civil, Structural, Architectural
+  hvac            String[]  // Heating, Ventilation, AC
+  mechanical      String[]
+  electrical      String[]
+  automation      String[]
+  cleanroom       String[]
+  equipment       String[]
+  digital         String[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model ProjectExperience {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId       String    @db.Uuid
+  company         Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  projectName     String
+  industry        String
+  country         String
+  scope           String    @db.Text
+  value           Decimal?  @db.Decimal(15, 2)
+  year            Int
+  gmpExperience   Boolean   @default(false)
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model QualityCompliance {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId       String    @unique @db.Uuid
+  company         Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  isoCertifications String[]
+  auditHistory      String?   @db.Text
+  qualitySystems    String?   @db.Text
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Capacity {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId       String    @unique @db.Uuid
+  company         Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  currentWorkload String?
+  availableEngineers Int?
+  regionsServed   String[]
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model VendorScore {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  companyId       String    @unique @db.Uuid
+  company         Company   @relation(fields: [companyId], references: [id], onDelete: Cascade)
+
+  capabilityScore Decimal   @default(0) @db.Decimal(5, 2) // 30%
+  experienceScore Decimal   @default(0) @db.Decimal(5, 2) // 30%
+  complianceScore Decimal   @default(0) @db.Decimal(5, 2) // 20%
+  capacityScore   Decimal   @default(0) @db.Decimal(5, 2) // 20%
+  overallScore    Decimal   @default(0) @db.Decimal(5, 2)
+
+  recommendationBadge String? // Low, Medium, High, Excellent
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model Favorite {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clientId        String    @db.Uuid
+  client          User      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  vendorId        String    @db.Uuid // Represents a Company ID
+
+  createdAt       DateTime  @default(now())
+
+  @@unique([clientId, vendorId])
+}
+
+model ComparisonList {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clientId        String    @db.Uuid
+  client          User      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  name            String?
+  vendorIds       String[]  // Array of Company UUIDs
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+
+model SearchHistory {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  clientId        String    @db.Uuid
+  client          User      @relation(fields: [clientId], references: [id], onDelete: Cascade)
+  query           String
+  filters         Json?
+
+  createdAt       DateTime  @default(now())
+}
+
+model ActivityLog {
+  id              String    @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  userId          String    @db.Uuid
+  user            User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  action          String
+  metadata        Json?
+
+  createdAt       DateTime  @default(now())
+}
