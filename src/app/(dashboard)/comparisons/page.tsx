@@ -31,7 +31,7 @@ export default async function ComparisonsPage() {
   }
 
   const features = [
-    { name: "VQI Score", render: (v: any) => <span className="font-bold text-blue-600 text-lg">{v.score?.overallScore || 'N/A'}</span> },
+    { name: "VQI Score", render: (v: any) => <span className="font-bold text-blue-600 text-lg">{v.score?.overallScore?.toString() || 'N/A'}</span> },
     { name: "HQ Location", render: (v: any) => v.country },
     { name: "Years Operating", render: (v: any) => v.yearsOperating },
     { name: "Employee Count", render: (v: any) => v.employeeCount },

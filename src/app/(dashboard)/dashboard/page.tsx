@@ -14,11 +14,11 @@ export default async function DashboardPage() {
 
   const totalVendors = vendors.length;
   const averageScore = totalVendors > 0 
-    ? Math.round(vendors.reduce((acc, v) => acc + (v.score?.overallScore || 0), 0) / totalVendors)
+    ? Math.round(vendors.reduce((acc, v) => acc + Number(v.score?.overallScore || 0), 0) / totalVendors)
     : 0;
   const totalProjects = vendors.reduce((acc, v) => acc + v.projects.length, 0);
   
-  const highTierVendors = vendors.filter(v => (v.score?.overallScore || 0) > 80).length;
+  const highTierVendors = vendors.filter(v => Number(v.score?.overallScore || 0) > 80).length;
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -117,7 +117,7 @@ export default async function DashboardPage() {
                   </div>
                   <div>
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                      VQI: {vendor.score?.overallScore || 'N/A'}
+                      VQI: {vendor.score?.overallScore?.toString() || 'N/A'}
                     </span>
                   </div>
                 </div>

@@ -44,7 +44,7 @@ export default async function VendorDetailsPage({ params }: { params: { id: stri
           </div>
           <div className="text-center">
             <div className="inline-flex items-center justify-center w-20 h-20 rounded-full border-4 border-blue-500">
-              <span className="text-2xl font-bold text-blue-700">{vendor.score?.overallScore || 'N/A'}</span>
+              <span className="text-2xl font-bold text-blue-700">{vendor.score?.overallScore?.toString() || 'N/A'}</span>
             </div>
             <p className="text-xs font-bold mt-1 text-black uppercase tracking-wide">VQI Score</p>
           </div>
@@ -129,7 +129,7 @@ export default async function VendorDetailsPage({ params }: { params: { id: stri
                   <tr key={p.id}>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-black">{p.projectName}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{p.industry}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{p.value.toLocaleString()}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-black">{p.value ? p.value.toString() : 'N/A'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-black">
                       {p.gmpExperience ? <span className="text-green-600 font-bold">Yes</span> : "No"}
                     </td>

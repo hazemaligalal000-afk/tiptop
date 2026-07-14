@@ -59,7 +59,7 @@ export default async function ShortlistPage() {
 
                 <div className="mt-4 sm:mt-0 sm:ml-6 flex flex-col items-end border-t sm:border-t-0 sm:border-l pt-4 sm:pt-0 sm:pl-6">
                   <div className="flex items-center justify-center w-16 h-16 rounded-full border-4 border-blue-500 relative mb-3">
-                    <span className="text-xl font-bold text-blue-700">{vendor.score?.overallScore || 0}</span>
+                    <span className="text-xl font-bold text-blue-700">{vendor.score?.overallScore?.toString() || '0'}</span>
                     <span className="absolute -top-2 bg-white px-1 text-[10px] font-bold text-black">VQI</span>
                   </div>
                   <div className="flex space-x-2 w-full sm:w-auto">
